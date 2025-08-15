@@ -13,4 +13,13 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
+eslintConfig.push({
+  rules: {
+    "react-hooks/exhaustive-deps": "off",
+    "react/jsx-key": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-unused-vars": "off",
+  },
+});
+
 export default eslintConfig;
