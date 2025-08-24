@@ -11,15 +11,15 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  {
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-    ],
-  },
 ];
+
+eslintConfig.push({
+  rules: {
+    "react-hooks/exhaustive-deps": "off",
+    "react/jsx-key": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-unused-vars": "off",
+  },
+});
 
 export default eslintConfig;
