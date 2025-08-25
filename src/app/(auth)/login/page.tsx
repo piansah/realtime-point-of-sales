@@ -1,4 +1,4 @@
-import Login from "../_components/login";
+import Login from "./_components/login";
 
 export const metadata = {
   title: "WPU Coffee | Login",
