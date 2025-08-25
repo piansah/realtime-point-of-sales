@@ -8,18 +8,11 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { LoginForm, LoginSchema } from "@/validations/auth-validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import FormInput from "@/components/common/form-input";
 
 export default function Login() {
   const form = useForm<LoginForm>({
@@ -40,44 +33,19 @@ export default function Login() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit((data) => console.log(data))}>
-            {/* Email */}
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
               name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="Insert your Email"
-                      autoComplete="off"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Email"
+              placeholder="Insert email here"
+              type="email"
             />
-
-            {/* Password */}
-            <FormField
-              control={form.control}
+            <FormInput
+              form={form}
               name="password"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Insert your Password"
-                      autoComplete="off"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Password"
+              placeholder="Insert password here"
+              type="password"
             />
 
             {/* Actions */}
