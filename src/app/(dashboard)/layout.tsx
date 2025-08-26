@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/common/app-sidebar"
 import { Separator } from "@/components/ui/separator"
 import { DarkModeToggle } from "@/components/common/darkmode-toggle";
 import { ReactNode } from "react"
+import DashboardBreadcrumb from "./_components/dashboard-breadcrumb";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
+            <DashboardBreadcrumb />
           </div>
           <div className="px-4">
             <DarkModeToggle />
