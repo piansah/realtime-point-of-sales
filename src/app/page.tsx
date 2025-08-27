@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DarkModeToggle } from "@/components/common/darkmode-toggle";
 import { motion } from "framer-motion";
 import { Coffee, Sparkles, Users } from "lucide-react";
+import Link from "next/link";
 
 export default function HomeScreen() {
   return (
@@ -32,9 +33,9 @@ export default function HomeScreen() {
         </p>
         <div className="flex gap-4">
           <Button size="lg">Order Now</Button>
-          <Button variant="outline" size="lg">
-            Learn More
-          </Button>
+          <Link href="/admin">
+            <Button size="lg">Access Dashboard</Button>
+          </Link>
         </div>
       </section>
 

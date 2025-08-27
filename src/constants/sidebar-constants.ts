@@ -4,33 +4,33 @@ import {
   LayoutDashboard,
   SquareMenu,
   Users,
-} from "lucide-react";
+} from 'lucide-react';
 
-export const SIDEBAR_LIST = {
+export const SIDEBAR_MENU_LIST = {
   admin: [
     {
-      title: "Dashboard",
-      path: "/admin",
+      title: 'Dashboard',
+      url: '/admin',
       icon: LayoutDashboard,
     },
     {
-      title: "Orders",
-      path: "/orders",
+      title: 'Order',
+      url: '/order',
       icon: Album,
     },
     {
-      title: "Menu",
-      path: "/admin/menu",
+      title: 'Menu',
+      url: '/admin/menu',
       icon: SquareMenu,
     },
     {
-      title: "Table",
-      path: "/admin/table",
+      title: 'Table',
+      url: '/admin/table',
       icon: Armchair,
     },
     {
-      title: "User",
-      path: "/admin/user",
+      title: 'User',
+      url: '/admin/user',
       icon: Users,
     },
   ],
@@ -38,4 +38,4 @@ export const SIDEBAR_LIST = {
   kitchen: [],
 };
 
-export type SidebarItem = keyof typeof SIDEBAR_LIST;
+export type SidebarMenuKey = keyof typeof SIDEBAR_MENU_LIST;

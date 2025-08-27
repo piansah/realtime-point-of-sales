@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/common/app-sidebar";
+import AppSidebar from "@/components/common/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { DarkModeToggle } from "@/components/common/darkmode-toggle";
 import { ReactNode } from "react";
