@@ -10,21 +10,21 @@ import { redirect } from "next/navigation";
 
 export async function login(
   prevState: AuthFormState,
-  formData: FormData | null,
+  formData: FormData | null
 ) {
   if (!formData) {
     return INITIAL_STATE_LOGIN_FORM;
   }
 
   const validatedFields = loginSchemaForm.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
+    email: formData.get("email"),
+    password: formData.get("password"),
   });
 
   if (!validatedFields.success) {
     return {
-        ...validatedFields.error.flatten().fieldErrors,
-        _form: [],
+      ...validatedFields.error.flatten().fieldErrors,
+      _form: [],
     };
   }
 
@@ -37,7 +37,7 @@ export async function login(
 
   if (error) {
     return {
-      status: 'error',
+      status: "error",
       errors: {
         ...prevState.errors,
         _form: [error.message],
@@ -46,21 +46,21 @@ export async function login(
   }
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user?.id)
+    .from("profiles")
+    .select("*")
+    .eq("id", user?.id)
     .single();
 
   if (profile) {
     const cookiesStore = await cookies();
-    cookiesStore.set('user_profile', JSON.stringify(profile), {
+    cookiesStore.set("user_profile", JSON.stringify(profile), {
       httpOnly: true,
-      path: '/',
-      sameSite: 'lax',
+      path: "/",
+      sameSite: "lax",
       maxAge: 60 * 60 * 24 * 365,
     });
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/');
+  revalidatePath("/", "layout");
+  redirect("/");
 }

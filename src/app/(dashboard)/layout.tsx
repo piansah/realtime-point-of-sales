@@ -1,8 +1,12 @@
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/common/app-sidebar"
-import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/common/app-sidebar";
+import { Separator } from "@/components/ui/separator";
 import { DarkModeToggle } from "@/components/common/darkmode-toggle";
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 import DashboardBreadcrumb from "./_components/dashboard-breadcrumb";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {

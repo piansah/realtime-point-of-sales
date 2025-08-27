@@ -46,9 +46,9 @@ export default function Login() {
 
   useEffect(() => {
     if (loginState?.status === "error") {
-      toast.error('Login Failed', {
+      toast.error("Login Failed", {
         description: loginState.errors?._form?.[0],
-      })
+      });
       startTransition(() => {
         loginAction(null);
       });

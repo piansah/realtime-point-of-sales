@@ -34,9 +34,7 @@ export default function DashboardBreadcrumb() {
                 </BreadcrumbPage>
               )}
             </BreadcrumbItem>
-            {index < pathSegments.length - 1 && (
-              <BreadcrumbSeparator />
-            )}
+            {index < pathSegments.length - 1 && <BreadcrumbSeparator />}
           </Fragment>
         ))}
       </BreadcrumbList>
