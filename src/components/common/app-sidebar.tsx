@@ -27,6 +27,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { SIDEBAR_MENU_LIST } from "@/constants/sidebar-constants";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { SignOut } from "@/actions/auth-action";
 
 type SidebarMenuKey = keyof typeof SIDEBAR_MENU_LIST;
 
@@ -124,7 +125,7 @@ export default function AppSidebar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => SignOut()}>
                     <LogOut />
                     Logout
                   </DropdownMenuItem>

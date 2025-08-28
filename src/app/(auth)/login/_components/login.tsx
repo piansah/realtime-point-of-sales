@@ -81,7 +81,8 @@ export default function Login() {
             <div className="flex flex-col items-center gap-3 mt-6">
               <Button
                 type="submit"
-                className="w-full px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                variant="teal"
+                className="w-full px-4 py-2 text-sm font-semibold"                
               >
                 {isPendingLogin ? (
                   <Loader2 className="animate-spin" />
