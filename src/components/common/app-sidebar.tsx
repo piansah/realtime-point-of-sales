@@ -88,7 +88,7 @@ export default function AppSidebar() {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
+                  <Avatar className="h-8 w-8 rounded-full">
                     <AvatarImage src={profile.avatar_url} alt={profile.name} />
                     <AvatarFallback className="rounded-lg">
                       {profile.name?.charAt(0).toUpperCase()}
@@ -111,7 +111,7 @@ export default function AppSidebar() {
               >
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5">
-                    <Avatar className="h-8 w-8 rounded-lg">
+                    <Avatar className="h-8 w-8 rounded-full">
                       <AvatarImage src={profile.avatar_url} alt={profile.name} />
                       <AvatarFallback className="rounded-lg">
                         {profile.name?.charAt(0).toUpperCase()}
