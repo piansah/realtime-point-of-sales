@@ -119,7 +119,7 @@ export default function AppSidebar() {
                     </Avatar>
                     <div className="leading-tight">
                       <h4 className="truncate font-medium">{profile.name}</h4>
-                      <p className="text-muted-foreground truncate text-xs">
+                      <p className="text-muted-foreground truncate text-xs capitalize">
                         {profile.role}
                       </p>
                     </div>
