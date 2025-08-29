@@ -112,8 +112,10 @@ export default function AppSidebar() {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src="" alt="" />
-                      <AvatarFallback className="rounded-lg">A</AvatarFallback>
+                      <AvatarImage src={profile.avatar_url} alt={profile.name} />
+                      <AvatarFallback className="rounded-lg">
+                        {profile.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="leading-tight">
                       <h4 className="truncate font-medium">{profile.name}</h4>
