@@ -12,7 +12,7 @@ export default function HomeScreen() {
     <main className="min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 shadow-sm border-b">
-        <h1 className="text-2xl font-bold">☕ Ghenaya Coffee</h1>
+        <h1 className="text-2xl font-bold">☕ WPU Coffee</h1>
         <div className="flex items-center gap-3">
           <DarkModeToggle />
         </div>
@@ -25,7 +25,7 @@ export default function HomeScreen() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          Welcome to <span className="text-primary">☕ Ghenaya Coffee</span>
+          Welcome to <span className="text-primary">☕ WPU Coffee</span>
         </motion.h2>
         <p className="text-lg text-muted-foreground max-w-xl mb-6">
           The best place to enjoy coffee, connect with friends, and experience
