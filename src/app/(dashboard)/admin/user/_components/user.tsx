@@ -4,25 +4,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import createClient from "@/lib/supabase/client";
 import { toast } from "sonner";
+import DataTable from "@/components/common/data-table";
+import { HEADER_TABLE_USER } from "@/constants/user-constants";
 
 export default function UserManagement() {
   const supabase = createClient();
-  const {data: users} = useQuery({
-    queryKey: ["users"],
+  const { data: users, isLoading } = useQuery({
+    queryKey: ['users'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact" })
-        .order("created_at");
+        .from('profiles')
+        .select('*', { count: 'exact' })
+        .order('created_at');
 
-        if (error)  toast.error("Get User data failed", {
+      if (error)
+        toast.error('Get User data failed', {
           description: error.message,
         });
-        return data;
+
+      return data;
     },
   });
+
+  const filteredData = useMemo(() => {
+    return (users || []).map((user, index) => {
+      return [index + 1, user.id, user.name, user.role, ''];
+    });
+  }, [users]);
 
   return (
     <div className="w-full">
@@ -37,12 +48,11 @@ export default function UserManagement() {
           </Dialog>
         </div>
       </div>
-      {users?.map((user) => (
-        <div key={user.id}>
-          <h2>{user.name}</h2>
-          <h2>{user.role}</h2>
-        </div>
-      ))}
+      <DataTable
+        header={HEADER_TABLE_USER}
+        data={filteredData}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
