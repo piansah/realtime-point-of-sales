@@ -22,7 +22,7 @@ export default function DropdownAction({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="default"
+          variant="ghost"
           className="text-muted-foreground size-8"
           size="icon"
         >
