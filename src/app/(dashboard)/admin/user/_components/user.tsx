@@ -1,20 +1,19 @@
 "use client";
 
 import createClient from "@/lib/supabase/client";
-import DataTable from '@/components/common/data-table';
-import DropdownAction from '@/components/common/dropdown-action';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import DataTable from "@/components/common/data-table";
+import DropdownAction from "@/components/common/dropdown-action";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
-import { useQuery } from '@tanstack/react-query';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
-import { toast } from 'sonner';
-import DialogCreateUser from './dialog-create-user';
+import { useQuery } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
+import { useMemo } from "react";
+import { toast } from "sonner";
+import DialogCreateUser from "./dialog-create-user";
 import { HEADER_TABLE_USER } from "@/constants/user-constants";
-import useDataTable from '@/hooks/useDataTable';
-
+import useDataTable from "@/hooks/use-datatable";
 
 
 export default function UserManagement() {
@@ -32,17 +31,17 @@ export default function UserManagement() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['users', currentPage, currentLimit, currentSearch],
+    queryKey: ["users", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
       const result = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
+        .from("profiles")
+        .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-        .order('created_at')
-        .ilike('name', `%${currentSearch}%`);
+        .order("created_at")
+        .ilike("name", `%${currentSearch}%`);
 
       if (result.error)
-        toast.error('Get User data failed', {
+        toast.error("Get User data failed", {
           description: result.error.message,
         });
 
@@ -75,7 +74,7 @@ export default function UserManagement() {
                   Delete
                 </span>
               ),
-              variant: 'destructive',
+              variant: "destructive",
               action: () => {},
             },
           ]}
