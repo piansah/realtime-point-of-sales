@@ -1,5 +1,6 @@
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from "@/constants/data-table-constans";
-import { useState } from "react";
+
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '@/constants/data-table-constans';
+import { useState } from 'react';
 
 export default function useDataTable() {
   const [currentPage, setCurrentPage] = useState(DEFAULT_PAGE);
@@ -16,9 +17,8 @@ export default function useDataTable() {
 
   return {
     currentPage,
-    currentLimit,
-    // currentSearch,
     handleChangePage,
+    currentLimit,
     handleChangeLimit,
-    // handleChangeSearch,
   };
+}
