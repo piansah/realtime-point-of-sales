@@ -13,6 +13,7 @@ import { toast } from "sonner";
 // import DialogCreateUser from "./dialog-create-user";
 import { HEADER_TABLE_USER } from "@/constants/user-constants";
 import useDataTable from "@/hooks/use-data-table";
+import DialogCreateUser from "./dialog-create-user";
 
 export default function UserManagement() {
   const supabase = createClient();
@@ -22,20 +23,24 @@ export default function UserManagement() {
     currentSearch,
     handleChangePage,
     handleChangeLimit,
-    handleChangeSearch
+    handleChangeSearch,
   } = useDataTable();
-  const { data: users, isLoading } = useQuery({
-    queryKey: ['users', currentPage, currentLimit, currentSearch],
+  const {
+    data: users,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["users", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
       const result = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact' })
+        .from("profiles")
+        .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-        .order('created_at')
-        .ilike('name', `%${currentSearch}%`);
+        .order("created_at")
+        .ilike("name", `%${currentSearch}%`);
 
       if (result.error)
-        toast.error('Get User data failed', {
+        toast.error("Get User data failed", {
           description: result.error.message,
         });
 
@@ -68,7 +73,7 @@ export default function UserManagement() {
                   Delete
                 </span>
               ),
-              variant: 'destructive',
+              variant: "destructive",
               action: () => {},
             },
           ]}
@@ -96,6 +101,7 @@ export default function UserManagement() {
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
+            <DialogCreateUser refetch={refetch} />
           </Dialog>
         </div>
       </div>
