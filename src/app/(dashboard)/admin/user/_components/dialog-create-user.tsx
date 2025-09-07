@@ -13,7 +13,10 @@ import {
   INITIAL_CREATE_USER_FORM,
   INITIAL_STATE_CREATE_USER,
 } from "@/constants/auth-constants";
-import { CreateUserForm ,createUserSchema } from "@/validations/auth-validations";
+import {
+  CreateUserForm,
+  createUserSchema,
+} from "@/validations/auth-validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { startTransition, useActionState, useEffect } from "react";
@@ -55,6 +58,7 @@ export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
       refetch();
     }
   }, [createUserState]);
+
   return (
     <DialogContent className="sm:max-w-[425px]">
       <Form {...form}>
@@ -86,7 +90,7 @@ export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
             form={form}
             name="password"
             label="Password"
-            placeholder="Insert your password"
+            placeholder="******"
             type="password"
           />
           <DialogFooter>
