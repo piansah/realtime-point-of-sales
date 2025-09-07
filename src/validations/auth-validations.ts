@@ -1,21 +1,21 @@
-import z from 'zod';
+import z from "zod";
 
 export const loginSchemaForm = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email'),
-  password: z.string().min(1, 'Password is required'),
+    .min(1, "Email is required")
+    .email("Please enter a valid email"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export const createUserSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email'),
-  password: z.string().min(1, 'Password is required'),
-  name: z.string().min(1, 'Name is required'),
-  role: z.string().min(1, 'Role is required'),
+    .min(1, "Email is required")
+    .email("Please enter a valid email"),
+  password: z.string().min(1, "Password is required"),
+  name: z.string().min(1, "Name is required"),
+  role: z.string().min(1, "Role is required"),
   // avatar_url: z.union([
   //   z.string().min(1, 'Image URL is required'),
   //   z.instanceof(File),
