@@ -1,21 +1,21 @@
-"use server";
+'use server';
 
-import { createClient } from "@/lib/supabase/server";
-import { AuthFormState } from "@/types/auth";
-import { createUserSchema } from "@/validations/auth-validations";
+import { createClient } from '@/lib/supabase/server';
+import { AuthFormState } from '@/types/auth';
+import { createUserSchema } from '@/validations/auth-validations';
 
 export async function createUser(prevState: AuthFormState, formData: FormData) {
   const validatedFields = createUserSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-    name: formData.get("name"),
-    role: formData.get("role"),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    name: formData.get('name'),
+    role: formData.get('role'),
     // avatar_url: formData.get('avatar_url'),
   });
 
   if (!validatedFields.success) {
     return {
-      status: "error",
+      status: 'error',
       errors: {
         ...validatedFields.error.flatten().fieldErrors,
         _form: [],
@@ -39,7 +39,7 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
 
   if (error) {
     return {
-      status: "error",
+      status: 'error',
       errors: {
         ...prevState.errors,
         _form: [error.message],
@@ -48,6 +48,6 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
   }
 
   return {
-    status: "success",
+    status: 'success',
   };
 }
