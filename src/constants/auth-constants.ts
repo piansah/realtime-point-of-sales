@@ -15,8 +15,8 @@ export const INITIAL_STATE_LOGIN_FORM = {
 export const INITIAL_STATE_PROFILE = {
   id: "",
   name: "",
-  avatar_url: "",
   role: "",
+  avatar_url: "",
 };
 
 export const INITIAL_CREATE_USER_FORM = {
