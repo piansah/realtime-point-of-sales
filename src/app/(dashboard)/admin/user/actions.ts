@@ -1,24 +1,50 @@
-'use server';
+"use server";
 
-import { createClient } from '@/lib/supabase/server';
-import { AuthFormState } from '@/types/auth';
-import { createUserSchema } from '@/validations/auth-validations';
+import { UploadFile } from "@/actions/storage-action";
+import { createClient } from "@/lib/supabase/server";
+import { AuthFormState } from "@/types/auth";
+import { createUserSchema } from "@/validations/auth-validations";
 
 export async function createUser(prevState: AuthFormState, formData: FormData) {
-  const validatedFields = createUserSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-    name: formData.get('name'),
-    role: formData.get('role'),
-    // avatar_url: formData.get('avatar_url'),
+  let validatedFields = createUserSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+    name: formData.get("name"),
+    role: formData.get("role"),
+    avatar_url: formData.get("avatar_url"),
   });
 
   if (!validatedFields.success) {
     return {
-      status: 'error',
+      status: "error",
       errors: {
         ...validatedFields.error.flatten().fieldErrors,
         _form: [],
+      },
+    };
+  }
+
+  if (validatedFields.data.avatar_url instanceof File) {
+    const { errors, data } = await UploadFile(
+      "images",
+      validatedFields.data.avatar_url,
+      "users"
+    );
+    if (errors) {
+      return {
+        status: "error",
+        errors: {
+          ...prevState.errors,
+          _form: [...errors._form],
+        },
+      };
+    }
+
+    validatedFields = {
+      ...validatedFields,
+      data: {
+        ...validatedFields.data,
+        avatar_url: data.url,
       },
     };
   }
@@ -32,14 +58,14 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
       data: {
         name: validatedFields.data.name,
         role: validatedFields.data.role,
-        // avatar_url: validatedFields.data.avatar_url,
+        avatar_url: validatedFields.data.avatar_url,
       },
     },
   });
 
   if (error) {
     return {
-      status: 'error',
+      status: "error",
       errors: {
         ...prevState.errors,
         _form: [error.message],
@@ -48,6 +74,6 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
   }
 
   return {
-    status: 'success',
+    status: "success",
   };
 }

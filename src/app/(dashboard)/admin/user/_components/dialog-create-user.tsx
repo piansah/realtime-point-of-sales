@@ -20,11 +20,12 @@ import {
 } from "@/validations/auth-validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { startTransition, useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createUser } from "../actions";
 import FormSelect from "@/components/common/form-select";
+import FormImage from "@/components/common/form-image";
 
 export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
   const form = useForm<CreateUserForm>({
@@ -38,7 +39,7 @@ export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(key, key === "avatar_url" ? preview!.file ?? "" : value);
     });
 
     startTransition(() => {
@@ -56,10 +57,19 @@ export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
     if (createUserState?.status === "success") {
       toast.success("Create User Success");
       form.reset();
+      setPreview(undefined);
       document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
       refetch();
     }
   }, [createUserState]);
+
+  const [preview, setPreview] = useState<
+    | {
+        file: File;
+        displayUrl: string;
+      }
+    | undefined
+  >(undefined);
 
   return (
     <DialogContent className="sm:max-w-[425px]">
@@ -87,6 +97,13 @@ export default function DialogCreateUser({ refetch }: { refetch: () => void }) {
             name="role"
             label="Role"
             selectItem={ROLES_LIST}
+          />
+          <FormImage
+            form={form}
+            name="avatar_url"
+            label="Avatar"
+            preview={preview}
+            setPreview={setPreview}
           />
           <FormInput
             form={form}
