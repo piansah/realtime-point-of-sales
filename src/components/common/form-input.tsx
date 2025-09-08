@@ -48,7 +48,7 @@ export default function FormInput<T extends FieldValues>({
                 />
               )}
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
