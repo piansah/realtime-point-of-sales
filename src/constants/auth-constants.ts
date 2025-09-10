@@ -39,8 +39,17 @@ export const INITIAL_STATE_CREATE_USER = {
   },
 };
 
+export const INITIAL_STATE_UPDATE_USER = {
+  status: "idle",
+  errors: {
+    name: [],
+    role: [],
+    avatar_url: [],
+    _form: [],
+  },
+};
 
-export const ROLES_LIST= [
+export const ROLES_LIST = [
   { value: "admin", label: "Admin" },
   { value: "cashier", label: "Cashier" },
   { value: "user", label: "User" },

@@ -10,11 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Form } from "@/components/ui/form";
 import { ROLES_LIST } from "@/constants/auth-constants";
 import { Preview } from "@/types/general";
 import { Loader2 } from "lucide-react";
 import { FormEvent } from "react";
-import { FieldValues, Form, Path, UseFormReturn } from "react-hook-form";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 export default function FormUser<T extends FieldValues>({
   form,
