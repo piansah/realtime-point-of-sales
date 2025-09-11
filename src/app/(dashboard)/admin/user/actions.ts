@@ -1,9 +1,12 @@
 "use server";
 
-import { UploadFile } from "@/actions/storage-action";
+import { DeleteFile, UploadFile } from "@/actions/storage-action";
 import { createClient } from "@/lib/supabase/server";
 import { AuthFormState } from "@/types/auth";
-import { createUserSchema, updateUserSchema } from "@/validations/auth-validations";
+import {
+  createUserSchema,
+  updateUserSchema,
+} from "@/validations/auth-validations";
 
 export async function createUser(prevState: AuthFormState, formData: FormData) {
   let validatedFields = createUserSchema.safeParse({
@@ -101,7 +104,8 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
       "images",
       validatedFields.data.avatar_url,
       "users",
-      oldAvatarUrl.split("/images/")[1],
+      
+      oldAvatarUrl.split("/images/")[1]
     );
     if (errors) {
       return {
@@ -124,11 +128,14 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.from('profiles').update({
-    name: validatedFields.data.name,
-    role: validatedFields.data.role,
-    avatar_url: validatedFields.data.avatar_url,
-  }).eq('id', formData.get('id') as string);
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      name: validatedFields.data.name,
+      role: validatedFields.data.role,
+      avatar_url: validatedFields.data.avatar_url,
+    })
+    .eq("id", formData.get("id"));
 
   if (error) {
     return {
@@ -143,4 +150,39 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
   return {
     status: "success",
   };
+}
+
+export async function deleteUser(prevState: AuthFormState, formData: FormData) {
+  const supabase = await createClient({ isAdmin: true });
+  const image = formData.get("avatar_url") as string;
+  const { status, errors } = await DeleteFile(
+    "images",
+    image.split("/images/")[1]
+  );
+
+  if (status === "error") {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [errors?._form?.[0] ?? "Unknown error"],
+      },
+    };
+  }
+
+  const { error } = await supabase.auth.admin.deleteUser(
+    formData.get("id") as string
+  );
+
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
+      },
+    };
+  }
+
+  return { status: "success" };
 }

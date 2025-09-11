@@ -16,6 +16,7 @@ import useDataTable from "@/hooks/use-data-table";
 import DialogCreateUser from "./dialog-create-user";
 import { Profile } from "@/types/auth";
 import DialogUpdateUser from "./dialog-update-user";
+import DialogDeleteUser from "./dialog-delete-user";
 
 export default function UserManagement() {
   const supabase = createClient();
@@ -32,17 +33,17 @@ export default function UserManagement() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["users", currentPage, currentLimit, currentSearch],
+    queryKey: ['users', currentPage, currentLimit, currentSearch],
     queryFn: async () => {
       const result = await supabase
-        .from("profiles")
-        .select("*", { count: "exact" })
+        .from('profiles')
+        .select('*', { count: 'exact' })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-        .order("created_at")
-        .ilike("name", `%${currentSearch}%`);
+        .order('created_at')
+        .ilike('name', `%${currentSearch}%`);
 
       if (result.error)
-        toast.error("Get User data failed", {
+        toast.error('Get User data failed', {
           description: result.error.message,
         });
 
@@ -52,17 +53,17 @@ export default function UserManagement() {
 
   const [selectedAction, setSelectedAction] = useState<{
     data: Profile;
-    type: "update" | "delete";
+    type: 'update' | 'delete';
   } | null>(null);
 
-  const handleCloseAction = (open: boolean) => {
+  const handleChangeAction = (open: boolean) => {
     if (!open) setSelectedAction(null);
   };
 
   const filteredData = useMemo(() => {
     return (users?.data || []).map((user, index) => {
       return [
-        index + 1,
+        currentLimit * (currentPage - 1) + index + 1,
         user.id,
         user.name,
         user.role,
@@ -76,7 +77,10 @@ export default function UserManagement() {
                 </span>
               ),
               action: () => {
-                setSelectedAction({ data: user, type: "update" });
+                setSelectedAction({
+                  data: user,
+                  type: 'update',
+                });
               },
             },
             {
@@ -86,8 +90,13 @@ export default function UserManagement() {
                   Delete
                 </span>
               ),
-              variant: "destructive",
-              action: () => {},
+              variant: 'destructive',
+              action: () => {
+                setSelectedAction({
+                  data: user,
+                  type: 'delete',
+                });
+              },
             },
           ]}
         />,
@@ -129,10 +138,16 @@ export default function UserManagement() {
         onChangeLimit={handleChangeLimit}
       />
       <DialogUpdateUser
-        open={selectedAction !== null && selectedAction.type === "update"}
-        currentData={selectedAction?.data as Profile}
-        handleChangeAction={handleCloseAction}
+        open={selectedAction !== null && selectedAction.type === 'update'}
         refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
+      <DialogDeleteUser
+        open={selectedAction !== null && selectedAction.type === 'delete'}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
       />
     </div>
   );
