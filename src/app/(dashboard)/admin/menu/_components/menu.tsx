@@ -15,6 +15,8 @@ import Image from 'next/image';
 import createClient from '@/lib/supabase/client';
 import { cn, convertIDR } from '@/lib/utils';
 import { HEADER_TABLE_MENU } from '@/constants/menu-constants';
+import DialogCreateMenu from './dialog-create-menu';
+
 
 
 export default function MenuManagement() {
@@ -153,6 +155,7 @@ export default function MenuManagement() {
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
+            <DialogCreateMenu />
           </Dialog>
         </div>
       </div>
