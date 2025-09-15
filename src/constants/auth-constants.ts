@@ -54,3 +54,14 @@ export const ROLES_LIST = [
   { value: "cashier", label: "Cashier" },
   { value: "user", label: "User" },
 ];
+
+export const AVAILABILITY_LIST = [
+  {
+    value: 'true',
+    label: 'Available',
+  },
+  {
+    value: 'false',
+    label: 'Not Available',
+  },
+];

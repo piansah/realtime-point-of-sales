@@ -1,23 +1,22 @@
-'use client';
+"use client";
 
-import DataTable from '@/components/common/data-table';
-import DropdownAction from '@/components/common/dropdown-action';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import useDataTable from '@/hooks/use-data-table';
-import { useQuery } from '@tanstack/react-query';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
-import { Menu } from '@/validations/menu-validation';
-import Image from 'next/image';
-import createClient from '@/lib/supabase/client';
-import { cn, convertIDR } from '@/lib/utils';
-import { HEADER_TABLE_MENU } from '@/constants/menu-constants';
-import DialogCreateMenu from './dialog-create-menu';
+import DataTable from "@/components/common/data-table";
+import DropdownAction from "@/components/common/dropdown-action";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import useDataTable from "@/hooks/use-data-table";
 
-
+import { useQuery } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { Menu } from "@/validations/menu-validation";
+import Image from "next/image";
+import { cn, convertIDR } from "@/lib/utils";
+import DialogCreateMenu from "./dialog-create-menu";
+import createClient from "@/lib/supabase/client";
+import { HEADER_TABLE_MENU } from "@/constants/menu-constants";
 
 export default function MenuManagement() {
   const supabase = createClient();
@@ -34,24 +33,24 @@ export default function MenuManagement() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['menus', currentPage, currentLimit, currentSearch],
+    queryKey: ["menus", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
       const query = supabase
-        .from('menus')
-        .select('*', { count: 'exact' })
+        .from("menus")
+        .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-        .order('created_at');
+        .order("created_at");
 
       if (currentSearch) {
         query.or(
-          `name.ilike.%${currentSearch}%,category.ilike.%${currentSearch}%`,
+          `name.ilike.%${currentSearch}%,category.ilike.%${currentSearch}%`
         );
       }
 
       const result = await query;
 
       if (result.error)
-        toast.error('Get Menu data failed', {
+        toast.error("Get Menu data failed", {
           description: result.error.message,
         });
 
@@ -61,7 +60,7 @@ export default function MenuManagement() {
 
   const [selectedAction, setSelectedAction] = useState<{
     data: Menu;
-    type: 'update' | 'delete';
+    type: "update" | "delete";
   } | null>(null);
 
   const handleChangeAction = (open: boolean) => {
@@ -87,17 +86,17 @@ export default function MenuManagement() {
           <p>Base: {convertIDR(menu.price)}</p>
           <p>Discount: {menu.discount}</p>
           <p>
-            After Discount:{' '}
+            After Discount:{" "}
             {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
           </p>
         </div>,
         <div
           className={cn(
-            'px-2 py-1 rounded-full text-white w-fit',
-            menu.is_available ? 'bg-green-600' : 'bg-red-500',
+            "px-2 py-1 rounded-full text-white w-fit",
+            menu.is_available ? "bg-green-600" : "bg-red-500"
           )}
         >
-          {menu.is_available ? 'Available' : 'Not Available'}
+          {menu.is_available ? "Available" : "Not Available"}
         </div>,
         <DropdownAction
           menu={[
@@ -111,7 +110,7 @@ export default function MenuManagement() {
               action: () => {
                 setSelectedAction({
                   data: menu,
-                  type: 'update',
+                  type: "update",
                 });
               },
             },
@@ -122,11 +121,11 @@ export default function MenuManagement() {
                   Delete
                 </span>
               ),
-              variant: 'destructive',
+              variant: "destructive",
               action: () => {
                 setSelectedAction({
                   data: menu,
-                  type: 'delete',
+                  type: "delete",
                 });
               },
             },
@@ -155,7 +154,7 @@ export default function MenuManagement() {
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
-            <DialogCreateMenu />
+            <DialogCreateMenu refetch={refetch} />
           </Dialog>
         </div>
       </div>

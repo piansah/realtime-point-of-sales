@@ -1,6 +1,6 @@
 "use server";
 
-import { DeleteFile, UploadFile } from "@/actions/storage-action";
+import { deleteFile, uploadFile } from "@/actions/storage-action";
 import { createClient } from "@/lib/supabase/server";
 import { AuthFormState } from "@/types/auth";
 import {
@@ -28,7 +28,7 @@ export async function createUser(prevState: AuthFormState, formData: FormData) {
   }
 
   if (validatedFields.data.avatar_url instanceof File) {
-    const { errors, data } = await UploadFile(
+    const { errors, data } = await uploadFile(
       "images",
       validatedFields.data.avatar_url,
       "users"
@@ -100,11 +100,11 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
 
   if (validatedFields.data.avatar_url instanceof File) {
     const oldAvatarUrl = formData.get("old_avatar_url") as string;
-    const { errors, data } = await UploadFile(
+    const { errors, data } = await uploadFile(
       "images",
       validatedFields.data.avatar_url,
       "users",
-      
+
       oldAvatarUrl.split("/images/")[1]
     );
     if (errors) {
@@ -155,7 +155,7 @@ export async function updateUser(prevState: AuthFormState, formData: FormData) {
 export async function deleteUser(prevState: AuthFormState, formData: FormData) {
   const supabase = await createClient({ isAdmin: true });
   const image = formData.get("avatar_url") as string;
-  const { status, errors } = await DeleteFile(
+  const { status, errors } = await deleteFile(
     "images",
     image.split("/images/")[1]
   );

@@ -3,7 +3,7 @@
 import { environment } from "@/configs/environment";
 import { createClient } from "@/lib/supabase/server";
 
-export async function UploadFile(
+export async function uploadFile(
   bucket: string,
   file: File,
   path: string,
@@ -46,7 +46,7 @@ export async function UploadFile(
   };
 }
 
-export async function DeleteFile(bucket: string, path: string) {
+export async function deleteFile(bucket: string, path: string) {
   const supabase = await createClient();
 
   const { error } = await supabase.storage.from(bucket).remove([path]);

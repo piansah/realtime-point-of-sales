@@ -1,32 +1,28 @@
-;import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { createMenu } from "../action";
-import { MenuForm, menuFormSchema } from "@/validations/menu-validation";
-import { INITIAL_STATE_MENU} from "@/constants/menu-constants";
-import FormMenu from "./form-menu";
-import { Preview } from "@/types/general";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { startTransition, useActionState, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Preview } from '@/types/general';
+import { MenuForm, menuFormSchema } from '@/validations/menu-validation';
+import FormMenu from './form-menu';
+import { INITIAL_MENU, INITIAL_STATE_MENU } from '@/constants/menu-constants';
+import { createMenu } from '../action';
 
 export default function DialogCreateMenu({ refetch }: { refetch: () => void }) {
   const form = useForm<MenuForm>({
     resolver: zodResolver(menuFormSchema),
+    defaultValues: INITIAL_MENU,
   });
 
   const [createMenuState, createMenuAction, isPendingCreateMenu] =
     useActionState(createMenu, INITIAL_STATE_MENU);
 
+  const [preview, setPreview] = useState<Preview | undefined>(undefined);
+
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(
-        key,
-        key === "image_url"
-          ? preview!.file ?? ""
-          : typeof value === "string" || value instanceof File
-          ? value
-          : String(value)
-      );
+      formData.append(key, key === 'image_url' ? preview!.file ?? '' : value);
     });
 
     startTransition(() => {
@@ -35,14 +31,14 @@ export default function DialogCreateMenu({ refetch }: { refetch: () => void }) {
   });
 
   useEffect(() => {
-    if (createMenuState?.status === "error") {
-      toast.error("Create User Failed", {
+    if (createMenuState?.status === 'error') {
+      toast.error('Create Menu Failed', {
         description: createMenuState.errors?._form?.[0],
       });
     }
 
-    if (createMenuState?.status === "success") {
-      toast.success("Create User Success");
+    if (createMenuState?.status === 'success') {
+      toast.success('Create Menu Success');
       form.reset();
       setPreview(undefined);
       document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
@@ -50,14 +46,12 @@ export default function DialogCreateMenu({ refetch }: { refetch: () => void }) {
     }
   }, [createMenuState]);
 
-  const [preview, setPreview] = useState<Preview | undefined>(undefined);
-
   return (
     <FormMenu
       form={form}
       onSubmit={onSubmit}
       isLoading={isPendingCreateMenu}
-      type="create"
+      type="Create"
       preview={preview}
       setPreview={setPreview}
     />
