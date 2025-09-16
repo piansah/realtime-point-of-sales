@@ -18,6 +18,7 @@ import DialogCreateMenu from "./dialog-create-menu";
 import createClient from "@/lib/supabase/client";
 import { HEADER_TABLE_MENU } from "@/constants/menu-constants";
 import DialogUpdateMenu from "./dialog-update-menu";
+import DialogDeleteMenu from "./dialog-delete-menu";
 
 export default function MenuManagement() {
   const supabase = createClient();
@@ -170,11 +171,17 @@ export default function MenuManagement() {
         onChangeLimit={handleChangeLimit}
       />
       <DialogUpdateMenu
-              open={selectedAction !== null && selectedAction.type === 'update'}
-              refetch={refetch}
-              currentData={selectedAction?.data}
-              handleChangeAction={handleChangeAction}
-            />
+        open={selectedAction !== null && selectedAction.type === "update"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
+      <DialogDeleteMenu
+        open={selectedAction !== null && selectedAction.type === "delete"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
     </div>
   );
 }
