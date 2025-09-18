@@ -15,6 +15,7 @@ import createClient from "@/lib/supabase/client";
 import { Table } from "@/validations/table-validations";
 import { HEADER_TABLE } from "@/constants/table-constants";
 import DialogCreateTable from "./dialog-create-table";
+import DialogUpdateTable from "./dialog-update-table";
 
 export default function TableManagement() {
   const supabase = createClient();
@@ -152,6 +153,12 @@ export default function TableManagement() {
         currentLimit={currentLimit}
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
+      />
+      <DialogUpdateTable
+        open={selectedAction !== null && selectedAction.type === 'update'}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
       />
     </div>
   );
