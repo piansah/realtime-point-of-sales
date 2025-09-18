@@ -16,6 +16,7 @@ import { Table } from "@/validations/table-validations";
 import { HEADER_TABLE } from "@/constants/table-constants";
 import DialogCreateTable from "./dialog-create-table";
 import DialogUpdateTable from "./dialog-update-table";
+import DialogDeleteTable from "./dialog-delete-table";
 
 export default function TableManagement() {
   const supabase = createClient();
@@ -155,7 +156,13 @@ export default function TableManagement() {
         onChangeLimit={handleChangeLimit}
       />
       <DialogUpdateTable
-        open={selectedAction !== null && selectedAction.type === 'update'}
+        open={selectedAction !== null && selectedAction.type === "update"}
+        refetch={refetch}
+        currentData={selectedAction?.data}
+        handleChangeAction={handleChangeAction}
+      />
+      <DialogDeleteTable
+        open={selectedAction !== null && selectedAction.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
