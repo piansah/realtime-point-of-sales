@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import createClient from "@/lib/supabase/client";
 import { Table } from "@/validations/table-validations";
 import { HEADER_TABLE } from "@/constants/table-constants";
+import DialogCreateTable from "./dialog-create-table";
 
 export default function TableManagement() {
   const supabase = createClient();
@@ -138,7 +139,7 @@ export default function TableManagement() {
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
-            {/* <DialogCreateMenu refetch={refetch} /> */}
+            <DialogCreateTable refetch={refetch} />
           </Dialog>
         </div>
       </div>
