@@ -29,3 +29,59 @@ insert into public.orders (order_id, customer_name, status, payment_url, table_i
 ('ORD-00058', 'Nia Kusuma', 'process', null, 58, now(), now()),
 ('ORD-00059', 'Dian Permata', 'cancel', null, 59, now(), now()),
 ('ORD-00060', 'Arif Budiman', 'settled', null, 60, now(), now());
+
+
+insert into public.orders_menus (order_id, menu_id, status, quantity, notes) values
+-- 1–3 (Kopi)
+(1, 1, 'pending', 2, 'extra foam, panas'),
+(2, 2, 'served', 1, 'dingin, less sugar'),
+(3, 3, 'pending', 1, 'double shot, tanpa gula'),
+
+-- 4–5 (Makanan)
+(4, 4, 'served', 1, 'level pedas 2, tambah telur'),
+(5, 5, 'pending', 2, 'tanpa bawang goreng'),
+
+-- 6–7 (Dessert)
+(6, 6, 'served', 1, 'extra stroberi'),
+(7, 7, 'pending', 1, 'extra cokelat topping'),
+
+-- 8–10 (Minuman non-kopi)
+(8, 8, 'served', 2, 'manis sedang, dingin'),
+(9, 9, 'pending', 1, 'tanpa es, hangat'),
+(10, 10, 'served', 1, 'dingin, less sugar'),
+
+-- 11–13 (Kopi lagi)
+(11, 1, 'pending', 1, 'tanpa gula, panas'),
+(12, 2, 'served', 1, 'dingin, pakai oat milk'),
+(13, 3, 'served', 2, 'americano dingin, no sugar'),
+
+-- 14–15 (Makanan)
+(14, 4, 'pending', 1, 'level pedas 1, tambah sosis'),
+(15, 5, 'served', 1, 'tanpa kerupuk'),
+
+-- 16–17 (Dessert)
+(16, 6, 'pending', 1, 'extra keju'),
+(17, 7, 'served', 2, 'brownies lebih moist'),
+
+-- 18–20 (Minuman non-kopi)
+(18, 8, 'pending', 1, 'hangat, manis sedang'),
+(19, 9, 'served', 2, 'dingin, tanpa gula'),
+(20, 10, 'pending', 1, 'pakai fresh milk, dingin'),
+
+-- 21–23 (Kopi)
+(21, 1, 'served', 2, 'extra shot espresso'),
+(22, 2, 'pending', 1, 'latte panas, tanpa gula'),
+(23, 3, 'served', 1, 'americano panas'),
+
+-- 24–25 (Makanan)
+(24, 4, 'pending', 2, 'tambah telur mata sapi'),
+(25, 5, 'served', 1, 'pedas sedang, tanpa bawang'),
+
+-- 26–27 (Dessert)
+(26, 6, 'served', 1, 'cheesecake dengan blueberry'),
+(27, 7, 'pending', 1, 'brownies extra cokelat chip'),
+
+-- 28–30 (Minuman non-kopi)
+(28, 8, 'served', 2, 'dingin, gula sedikit'),
+(29, 9, 'pending', 1, 'hangat, tanpa es'),
+(30, 10, 'served', 1, 'less sugar, dingin');
