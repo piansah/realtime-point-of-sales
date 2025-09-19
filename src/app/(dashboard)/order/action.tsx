@@ -1,18 +1,16 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { TableFormState } from '@/types/table';
-import { tableSchema } from '@/validations/table-validations';
+import { OrderFormState } from '@/types/order';
+import { orderFormSchema } from '@/validations/order-validations';
 
-
-export async function createTable(
-  prevState: TableFormState,
+export async function createOrder(
+  prevState: OrderFormState,
   formData: FormData,
 ) {
-  const validatedFields = tableSchema.safeParse({
-    name: formData.get('name'),
-    description: formData.get('description'),
-    capacity: parseInt(formData.get('capacity') as string),
+  const validatedFields = orderFormSchema.safeParse({
+    customer_name: formData.get('customer_name'),
+    table_id: Number(formData.get('table_id')), // cast ke number
     status: formData.get('status'),
   });
 
@@ -27,97 +25,48 @@ export async function createTable(
   }
 
   const supabase = await createClient();
+  const orderId = `WPUCAFE-${Date.now()}`;
 
-  const { error } = await supabase.from('tables').insert({
-    name: validatedFields.data.name,
-    description: validatedFields.data.description,
-    capacity: validatedFields.data.capacity,
+  // Jalankan step by step biar lebih aman
+  const { error: orderError } = await supabase.from('orders').insert([{
+    order_id: orderId,
+    customer_name: validatedFields.data.customer_name,
+    table_id: validatedFields.data.table_id,
     status: validatedFields.data.status,
-  });
+  }]);
 
-  if (error) {
+  if (orderError) {
     return {
       status: 'error',
       errors: {
         ...prevState.errors,
-        _form: [error.message],
+        _form: [orderError.message],
       },
     };
   }
 
-  return {
-    status: 'success',
-  };
-}
-
-export async function updateTable(
-  prevState: TableFormState,
-  formData: FormData,
-) {
-  const validatedFields = tableSchema.safeParse({
-    name: formData.get('name'),
-    description: formData.get('description'),
-    capacity: parseInt(formData.get('capacity') as string),
-    status: formData.get('status'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      status: 'error',
-      errors: {
-        ...validatedFields.error.flatten().fieldErrors,
-        _form: [],
-      },
-    };
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase
+  const { error: tableError } = await supabase
     .from('tables')
     .update({
-      name: validatedFields.data.name,
-      description: validatedFields.data.description,
-      capacity: validatedFields.data.capacity,
-      status: validatedFields.data.status,
+      status:
+        validatedFields.data.status === 'reserved'
+          ? 'reserved'
+          : 'unavailable',
     })
-    .eq('id', formData.get('id'));
+    .eq('id', validatedFields.data.table_id);
 
-  if (error) {
+  if (tableError) {
     return {
       status: 'error',
       errors: {
         ...prevState.errors,
-        _form: [error.message],
+        _form: [tableError.message],
       },
     };
   }
 
   return {
     status: 'success',
+    order_id: orderId,
   };
-}
-
-export async function deleteTable(
-  prevState: TableFormState,
-  formData: FormData,
-) {
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from('tables')
-    .delete()
-    .eq('id', formData.get('id'));
-
-  if (error) {
-    return {
-      status: 'error',
-      errors: {
-        ...prevState.errors,
-        _form: [error.message],
-      },
-    };
-  }
-
-  return { status: 'success' };
 }
