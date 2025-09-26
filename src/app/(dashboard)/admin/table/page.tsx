@@ -4,6 +4,6 @@ export const metadata = {
   title: "WPU Caffee - Table Management",
 };
 
-export default function MenuManagementPage() {
+export default function TableManagementPage() {
   return <TableManagement />;
 }
