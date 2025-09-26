@@ -1,9 +1,9 @@
-import OrderManagement from "./_components/order"
+import OrderManagement from "./_components/order";
 
 export const metadata = {
-  title: "WPU Caffee - Table Management",
+  title: "WPU Caffee - Order Management",
 };
 
-export default function MenuManagementPage() {
+export default function OrderManagementPage() {
   return <OrderManagement />;
 }
