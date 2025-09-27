@@ -2,28 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FILTER_MENU } from "@/constants/order-constants";
 import useDataTable from "@/hooks/use-data-table";
-import createClient from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import CardMenu from "./card-menu";
 import LoadingCardMenu from "./loading-card-menu";
 import CartSection from "./cart";
+import createClient from "@/lib/supabase/client";
+import { FILTER_MENU } from "@/constants/order-constants";
 
 export default function AddOrderItem({ id }: { id: string }) {
   const supabase = createClient();
   const {
-    currentPage,
-    handleChangePage,
     currentSearch,
-    handleChangeSearch,
     currentFilter,
+    handleChangeSearch,
     handleChangeFilter,
   } = useDataTable();
 
   const { data: menus, isLoading: isLoadingMenu } = useQuery({
-    queryKey: ["menus", currentPage, currentSearch],
+    queryKey: ["menus", currentSearch, currentFilter],
     queryFn: async () => {
       const query = supabase
         .from("menus")
@@ -65,6 +63,7 @@ export default function AddOrderItem({ id }: { id: string }) {
     },
     enabled: !!id,
   });
+
   return (
     <div className="flex flex-col lg:flex-row gap-4 w-full">
       <div className="space-y-4 lg:w-2/3">
@@ -76,7 +75,7 @@ export default function AddOrderItem({ id }: { id: string }) {
                 <Button
                   key={item.value}
                   onClick={() => handleChangeFilter(item.value)}
-                  variant={currentFilter === item.value ? 'default' : 'outline'}
+                  variant={currentFilter === item.value ? "default" : "outline"}
                 >
                   {item.label}
                 </Button>
