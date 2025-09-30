@@ -41,6 +41,7 @@ export default function CartSection({
       carts.map((item) => (item.menu_id === id ? { ...item, notes } : item)),
     );
   };
+  
   return (
     <Card className="w-full shadow-sm">
       <CardContent className="space-y-4">
