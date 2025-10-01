@@ -1,167 +1,209 @@
-"use server";
+"use client";
 
-import { createClient } from "@/lib/supabase/server";
-import { FormState } from "@/types/general";
-import { Cart, OrderFormState } from "@/types/order";
-import { orderFormSchema } from "@/validations/order-validations";
+import DataTable from "@/components/common/data-table";
+import { Button } from "@/components/ui/button";
+import useDataTable from "@/hooks/use-data-table";
+import { cn, convertIDR } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import Link from "next/link";
+import { startTransition, useActionState, useEffect, useMemo } from "react";
+import { toast } from "sonner";
 
-import { redirect } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { EllipsisVertical } from "lucide-react";
+import createClient from "@/lib/supabase/client";
+import { updateStatusOrderItem } from "../../action";
+import { INITIAL_STATE_ACTION } from "@/constants/general-constants";
+import { HEADER_TABLE_DETAIL_ORDER } from "@/constants/order-constants";
+import Summary from "./sumary";
 
-export async function createOrder(
-  prevState: OrderFormState,
-  formData: FormData
-) {
-  const validatedFields = orderFormSchema.safeParse({
-    customer_name: formData.get("customer_name"),
-    table_id: formData.get("table_id"),
-    status: formData.get("status"),
+export default function DetailOrder({ id }: { id: string }) {
+  const supabase = createClient();
+  const { currentPage, currentLimit, handleChangePage, handleChangeLimit } =
+    useDataTable();
+
+  const { data: order } = useQuery({
+    queryKey: ["order", id],
+    queryFn: async () => {
+      const result = await supabase
+        .from("orders")
+        .select("id, customer_name, status, payment_url, tables (name, id)")
+        .eq("order_id", id)
+        .single();
+
+      if (result.error)
+        toast.error("Get Order data failed", {
+          description: result.error.message,
+        });
+
+      return result.data;
+    },
+    enabled: !!id,
   });
 
-  if (!validatedFields.success) {
-    return {
-      status: "error",
-      errors: {
-        ...validatedFields.error.flatten().fieldErrors,
-        _form: [],
-      },
-    };
-  }
+  const {
+    data: orderMenu,
+    isLoading: isLoadingOrderMenu,
+    refetch: refetchOrderMenu,
+  } = useQuery({
+    queryKey: ["orders_menu", order?.id, currentPage, currentLimit],
+    queryFn: async () => {
+      const result = await supabase
+        .from("orders_menus")
+        .select("*, menus (id, name, image_url, price)", { count: "exact" })
+        .eq("order_id", order?.id)
+        .order("status");
 
-  const supabase = await createClient();
+      if (result.error)
+        toast.error("Get order menu data failed", {
+          description: result.error.message,
+        });
 
-  const orderId = `WPUCAFE-${Date.now()}`;
+      return result;
+    },
+    enabled: !!order?.id,
+  });
 
-  const [orderResult, tableResult] = await Promise.all([
-    supabase.from("orders").insert({
-      order_id: orderId,
-      customer_name: validatedFields.data.customer_name,
-      table_id: validatedFields.data.table_id,
-      status: validatedFields.data.status,
-    }),
-    supabase
-      .from("tables")
-      .update({
-        status:
-          validatedFields.data.status === "reserved"
-            ? "reserved"
-            : "unavailable",
-      })
-      .eq("id", validatedFields.data.table_id),
-  ]);
+  const [updateStatusOrderState, updateStatusOrderAction] = useActionState(
+    updateStatusOrderItem,
+    INITIAL_STATE_ACTION
+  );
 
-  const orderError = orderResult.error;
-  const tableError = tableResult.error;
+  const handleUpdateStatusOrder = async (data: {
+    id: string;
+    status: string;
+  }) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([Key, value]) => {
+      formData.append(Key, value);
+    });
 
-  if (orderError || tableError) {
-    return {
-      status: "error",
-      errors: {
-        ...prevState.errors,
-        _form: [
-          ...(orderError ? [orderError.message] : []),
-          ...(tableError ? [tableError.message] : []),
-        ],
-      },
-    };
-  }
-
-  return {
-    status: "success",
+    startTransition(() => {
+      updateStatusOrderAction(formData);
+    });
   };
-}
 
-export async function updateReservation(
-  prevState: FormState,
-  formData: FormData
-) {
-  const supabase = await createClient();
+  useEffect(() => {
+    if (updateStatusOrderState?.status === "error") {
+      toast.error("Update Status Order Failed", {
+        description: updateStatusOrderState.errors?._form?.[0],
+      });
+    }
 
-  const [orderResult, tableResult] = await Promise.all([
-    supabase
-      .from("orders")
-      .update({
-        status: formData.get("status"),
-      })
-      .eq("id", formData.get("id")),
-    supabase
-      .from("tables")
-      .update({
-        status:
-          formData.get("status") === "process" ? "unavailable" : "available",
-      })
-      .eq("id", formData.get("table_id")),
-  ]);
+    if (updateStatusOrderState?.status === "success") {
+      toast.success("Update Status Order Success");
+      refetchOrderMenu();
+    }
+  }, [updateStatusOrderState]);
 
-  const orderError = orderResult.error;
-  const tableError = tableResult.error;
+  const filteredData = useMemo(() => {
+    return (orderMenu?.data || []).map((item, index) => {
+      return [
+        currentLimit * (currentPage - 1) + index + 1,
+        <div className="flex items-center gap-2">
+          <Image
+            src={item.menus.image_url}
+            alt={item.menus.name}
+            width={40}
+            height={40}
+            className="rounded"
+          />
+          <div className="flex flex-col">
+            {item.menus.name} x {item.quantity}
+            <span className="text-xs text-muted-foreground">
+              {item.notes || "No Notes"}
+            </span>
+          </div>
+        </div>,
+        <div>{convertIDR(item.menus.price * item.quantity)}</div>,
+        <div
+          className={cn("px-2 py-1 rounded-full text-white w-fit capitalize", {
+            "bg-gray-500": item.status === "pending",
+            "bg-yellow-500": item.status === "process",
+            "bg-blue-500": item.status === "ready",
+            "bg-green-500": item.status === "served",
+          })}
+        >
+          {item.status}
+        </div>,
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                "data-[state=open]:bg-muted text-muted-foreground flex size-8",
+                { hidden: item.status === "served" }
+              )}
+              size="icon"
+            >
+              <EllipsisVertical />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            {["pending", "process", "ready"].map((status, index) => {
+              const nextStatus = ["process", "ready", "served"][index];
+              return (
+                item.status === status && (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() =>
+                      handleUpdateStatusOrder({
+                        id: item.id,
+                        status: nextStatus,
+                      })
+                    }
+                    className="capitalize"
+                  >
+                    {nextStatus}
+                  </DropdownMenuItem>
+                )
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>,
+      ];
+    });
+  }, [orderMenu?.data]);
 
-  if (orderError || tableError) {
-    return {
-      status: "error",
-      errors: {
-        ...prevState.errors,
-        _form: [
-          ...(orderError ? [orderError.message] : []),
-          ...(tableError ? [tableError.message] : []),
-        ],
-      },
-    };
-  }
+  const totalPages = useMemo(() => {
+    return orderMenu && orderMenu.count !== null
+      ? Math.ceil(orderMenu.count / currentLimit)
+      : 0;
+  }, [orderMenu]);
 
-  return {
-    status: "success",
-  };
-}
-
-export async function addOrderItem(
-  prevState: OrderFormState,
-  data: {
-    order_id: string;
-    items: Cart[];
-  }
-) {
-  const supabase = await createClient();
-
-  const payload = data.items.map(({ total, menu, ...item }) => item);
-
-  const { error } = await supabase.from("orders_menus").insert(payload);
-  if (error) {
-    return {
-      status: "error",
-      errors: {
-        ...prevState,
-        _form: [],
-      },
-    };
-  }
-
-  redirect(`/order/${data.order_id}`);
-}
-
-export async function updateStatusOrderitem(
-  prevState: FormState,
-  formData: FormData
-) {
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from("orders_menus")
-    .update({
-      status: formData.get("status"),
-    })
-    .eq("id", formData.get("id"));
-
-  if (error) {
-    return {
-      status: "error",
-      errors: {
-        ...prevState,
-        _form: [error.message],
-      },
-    };
-  }
-
-  return {
-    status: "success",
-  };
+  return (
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between gap-4 w-full">
+        <h1 className="text-2xl font-bold">Detail Order</h1>
+        <Link href={`/order/${id}/add`}>
+          <Button>Add Order Item</Button>
+        </Link>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-4 w-full">
+        <div className="lg:w-2/3">
+          <DataTable
+            header={HEADER_TABLE_DETAIL_ORDER}
+            data={filteredData}
+            isLoading={isLoadingOrderMenu}
+            totalPages={totalPages}
+            currentPage={currentPage}
+            currentLimit={currentLimit}
+            onChangePage={handleChangePage}
+            onChangeLimit={handleChangeLimit}
+          />
+        </div>
+        <div className="lg:w-1/3">
+          {order && (
+            <Summary order={order} orderMenu={orderMenu?.data} id={id} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
