@@ -1,9 +1,9 @@
-import Script from 'next/script';
-import DetailOrder from './_components/detail-order';
-import { environment } from '@/configs/environment';
+import Script from "next/script";
+import DetailOrder from "./_components/detail-order";
+import { environment } from "@/configs/environment";
 
 export const metadata = {
-  title: 'WPU Cafe | Detail Order',
+  title: "WPU Cafe | Detail Order",
 };
 
 export default async function DetailOrderPage({
