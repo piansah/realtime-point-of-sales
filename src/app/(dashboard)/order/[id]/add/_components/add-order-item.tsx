@@ -16,6 +16,7 @@ import { addOrderItem } from '../../../action';
 import { INITIAL_STATE_ACTION } from '@/constants/general-constants';
 import { FILTER_MENU } from '@/constants/order-constants';
 
+
 export default function AddOrderItem({ id }: { id: string }) {
   const supabase = createClient();
   const {
@@ -182,4 +183,3 @@ export default function AddOrderItem({ id }: { id: string }) {
     </div>
   );
 }
-

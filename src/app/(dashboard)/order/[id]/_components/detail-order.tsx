@@ -1,27 +1,30 @@
-"use client";
+'use client';
 
-import DataTable from "@/components/common/data-table";
-import { Button } from "@/components/ui/button";
-import useDataTable from "@/hooks/use-data-table";
-import { cn, convertIDR } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
-import { startTransition, useActionState, useEffect, useMemo } from "react";
-import { toast } from "sonner";
+import DataTable from '@/components/common/data-table';
+import { Button } from '@/components/ui/button';
+
+import useDataTable from '@/hooks/use-data-table';
+
+import { cn, convertIDR } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { startTransition, useActionState, useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { EllipsisVertical } from "lucide-react";
-import createClient from "@/lib/supabase/client";
-import { updateStatusOrderItem } from "../../action";
-import { INITIAL_STATE_ACTION } from "@/constants/general-constants";
-import { HEADER_TABLE_DETAIL_ORDER } from "@/constants/order-constants";
-import Summary from "./sumary";
+} from '@/components/ui/dropdown-menu';
+import { EllipsisVertical } from 'lucide-react';
+import createClient from '@/lib/supabase/client';
+import { INITIAL_STATE_ACTION } from '@/constants/general-constants';
+import { HEADER_TABLE_DETAIL_ORDER } from '@/constants/order-constants';
+import Summary from './sumary';
+import { updateStatusOrderItem } from '../../action';
+
 
 export default function DetailOrder({ id }: { id: string }) {
   const supabase = createClient();
@@ -29,16 +32,16 @@ export default function DetailOrder({ id }: { id: string }) {
     useDataTable();
 
   const { data: order } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ['order', id],
     queryFn: async () => {
       const result = await supabase
-        .from("orders")
-        .select("id, customer_name, status, payment_token, tables (name, id)")
-        .eq("order_id", id)
+        .from('orders')
+        .select('id, customer_name, status, payment_token, tables (name, id)')
+        .eq('order_id', id)
         .single();
 
       if (result.error)
-        toast.error("Get Order data failed", {
+        toast.error('Get Order data failed', {
           description: result.error.message,
         });
 
@@ -52,16 +55,16 @@ export default function DetailOrder({ id }: { id: string }) {
     isLoading: isLoadingOrderMenu,
     refetch: refetchOrderMenu,
   } = useQuery({
-    queryKey: ["orders_menu", order?.id, currentPage, currentLimit],
+    queryKey: ['orders_menu', order?.id, currentPage, currentLimit],
     queryFn: async () => {
       const result = await supabase
-        .from("orders_menus")
-        .select("*, menus (id, name, image_url, price)", { count: "exact" })
-        .eq("order_id", order?.id)
-        .order("status");
+        .from('orders_menus')
+        .select('*, menus (id, name, image_url, price)', { count: 'exact' })
+        .eq('order_id', order?.id)
+        .order('status');
 
       if (result.error)
-        toast.error("Get order menu data failed", {
+        toast.error('Get order menu data failed', {
           description: result.error.message,
         });
 
@@ -72,7 +75,7 @@ export default function DetailOrder({ id }: { id: string }) {
 
   const [updateStatusOrderState, updateStatusOrderAction] = useActionState(
     updateStatusOrderItem,
-    INITIAL_STATE_ACTION
+    INITIAL_STATE_ACTION,
   );
 
   const handleUpdateStatusOrder = async (data: {
@@ -90,14 +93,14 @@ export default function DetailOrder({ id }: { id: string }) {
   };
 
   useEffect(() => {
-    if (updateStatusOrderState?.status === "error") {
-      toast.error("Update Status Order Failed", {
+    if (updateStatusOrderState?.status === 'error') {
+      toast.error('Update Status Order Failed', {
         description: updateStatusOrderState.errors?._form?.[0],
       });
     }
 
-    if (updateStatusOrderState?.status === "success") {
-      toast.success("Update Status Order Success");
+    if (updateStatusOrderState?.status === 'success') {
+      toast.success('Update Status Order Success');
       refetchOrderMenu();
     }
   }, [updateStatusOrderState]);
@@ -117,17 +120,17 @@ export default function DetailOrder({ id }: { id: string }) {
           <div className="flex flex-col">
             {item.menus.name} x {item.quantity}
             <span className="text-xs text-muted-foreground">
-              {item.notes || "No Notes"}
+              {item.notes || 'No Notes'}
             </span>
           </div>
         </div>,
         <div>{convertIDR(item.menus.price * item.quantity)}</div>,
         <div
-          className={cn("px-2 py-1 rounded-full text-white w-fit capitalize", {
-            "bg-gray-500": item.status === "pending",
-            "bg-yellow-500": item.status === "process",
-            "bg-blue-500": item.status === "ready",
-            "bg-green-500": item.status === "served",
+          className={cn('px-2 py-1 rounded-full text-white w-fit capitalize', {
+            'bg-gray-500': item.status === 'pending',
+            'bg-yellow-500': item.status === 'process',
+            'bg-blue-500': item.status === 'ready',
+            'bg-green-500': item.status === 'served',
           })}
         >
           {item.status}
@@ -137,8 +140,8 @@ export default function DetailOrder({ id }: { id: string }) {
             <Button
               variant="ghost"
               className={cn(
-                "data-[state=open]:bg-muted text-muted-foreground flex size-8",
-                { hidden: item.status === "served" }
+                'data-[state=open]:bg-muted text-muted-foreground flex size-8',
+                { hidden: item.status === 'served' },
               )}
               size="icon"
             >
@@ -146,8 +149,8 @@ export default function DetailOrder({ id }: { id: string }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            {["pending", "process", "ready"].map((status, index) => {
-              const nextStatus = ["process", "ready", "served"][index];
+            {['pending', 'process', 'ready'].map((status, index) => {
+              const nextStatus = ['process', 'ready', 'served'][index];
               return (
                 item.status === status && (
                   <DropdownMenuItem
@@ -207,3 +210,4 @@ export default function DetailOrder({ id }: { id: string }) {
     </div>
   );
 }
+

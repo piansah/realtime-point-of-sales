@@ -1,10 +1,17 @@
-import Script from "next/script";
-import DetailOrder from "./_components/detail-order";
-import { environment } from "@/configs/environment";
+import Script from 'next/script';
+import DetailOrder from './_components/detail-order';
+import { environment } from '@/configs/environment';
 
 export const metadata = {
-  title: "WPU Cafe | Detail Order",
+  title: 'WPU Cafe | Detail Order',
 };
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    snap: any;
+  }
+}
 
 export default async function DetailOrderPage({
   params,
