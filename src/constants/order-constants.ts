@@ -64,3 +64,10 @@ export const FILTER_MENU = [
     label: 'Beverages',
   },
 ];
+
+export const INITIAL_STATE_GENERATE_PAYMENT = {
+    ...INITIAL_STATE_ORDER,
+    data: {
+        payment_token: '',
+    }
+}
