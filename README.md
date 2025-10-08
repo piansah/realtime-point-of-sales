@@ -39,3 +39,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 #hashmicro interview 23/9/2025
 #reschedule interview ke 01/10/2025
 #4 Oktober Masih mager
+#belajar notion dulu bro
