@@ -1,4 +1,4 @@
-insert into public.orders (order_id, customer_name, status, payment_url, table_id, created_at, updated_at) values
+insert into public.orders (order_id, customer_name, status, payment_token, table_id, created_at, updated_at) values
 ('ORD-00031', 'Budi Santoso', 'settled', null, 31, now(), now()),
 ('ORD-00032', 'Siti Aminah', 'process', null, 32, now(), now()),
 ('ORD-00033', 'Agus Pratama', 'reserved', null, 33, now(), now()),
