@@ -6,14 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import useDataTable from '@/hooks/use-data-table';
-import createClient from '@/lib/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { HEADER_TABLE_ORDER } from '@/constants/order-constant';
+import createClient from '@/lib/supabase/client';
 import { Table } from '@/validations/table-validations';
+import DialogCreateOrder from './_components/dialog-create-order';
+import { HEADER_TABLE_ORDER } from '@/constants/order-constant';
+
 
 export default function OrderManagement() {
   const supabase = createClient();
@@ -25,6 +27,7 @@ export default function OrderManagement() {
     handleChangeLimit,
     handleChangeSearch,
   } = useDataTable();
+
   const {
     data: orders,
     isLoading,
@@ -57,6 +60,19 @@ export default function OrderManagement() {
         });
 
       return result;
+    },
+  });
+
+  const { data: tables, refetch: refetchTables } = useQuery({
+    queryKey: ['tables'],
+    queryFn: async () => {
+      const result = await supabase
+        .from('tables')
+        .select('*')
+        .order('created_at')
+        .order('status');
+
+      return result.data;
     },
   });
 
@@ -110,6 +126,7 @@ export default function OrderManagement() {
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
+            <DialogCreateOrder tables={tables} refetch={refetch} />
           </Dialog>
         </div>
       </div>
