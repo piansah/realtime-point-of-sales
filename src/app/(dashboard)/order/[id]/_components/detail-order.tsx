@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import DataTable from "@/components/common/data-table";
-import { Button } from "@/components/ui/button";
-import { HEADER_TABLE_DETAIL_ORDER } from "@/constants/order-constant";
-import useDataTable from "@/hooks/use-data-table";
-import createClient from "@/lib/supabase/client";
-import { cn, convertIDR } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
-import { useMemo } from "react";
-import { toast } from "sonner";
+import DataTable from '@/components/common/data-table';
+import { Button } from '@/components/ui/button';
+import { HEADER_TABLE_DETAIL_ORDER } from '@/constants/order-constant';
+import useDataTable from '@/hooks/use-data-table';
+import { cn, convertIDR } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useMemo } from 'react';
+import { toast } from 'sonner';
+import Summary from './summary';
+import createClient from '@/lib/supabase/client';
 
 export default function DetailOrder({ id }: { id: string }) {
   const supabase = createClient();
@@ -18,16 +19,16 @@ export default function DetailOrder({ id }: { id: string }) {
     useDataTable();
 
   const { data: order } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ['order', id],
     queryFn: async () => {
       const result = await supabase
-        .from("orders")
-        .select("id, customer_name, status, payment_token, tables (name, id)")
-        .eq("order_id", id)
+        .from('orders')
+        .select('id, customer_name, status, payment_token, tables (name, id)')
+        .eq('order_id', id)
         .single();
 
       if (result.error)
-        toast.error("Get Order data failed", {
+        toast.error('Get Order data failed', {
           description: result.error.message,
         });
 
@@ -37,16 +38,16 @@ export default function DetailOrder({ id }: { id: string }) {
   });
 
   const { data: orderMenu, isLoading: isLoadingOrderMenu } = useQuery({
-    queryKey: ["orders_menu", order?.id, currentPage, currentLimit],
+    queryKey: ['orders_menu', order?.id, currentPage, currentLimit],
     queryFn: async () => {
       const result = await supabase
-        .from("orders_menus")
-        .select("*, menus (id, name, image_url, price)", { count: "exact" })
-        .eq("order_id", order?.id)
-        .order("status");
+        .from('orders_menus')
+        .select('*, menus (id, name, image_url, price)', { count: 'exact' })
+        .eq('order_id', order?.id)
+        .order('status');
 
       if (result.error)
-        toast.error("Get order menu data failed", {
+        toast.error('Get order menu data failed', {
           description: result.error.message,
         });
 
@@ -70,22 +71,22 @@ export default function DetailOrder({ id }: { id: string }) {
           <div className="flex flex-col">
             {item.menus.name} x {item.quantity}
             <span className="text-xs text-muted-foreground">
-              {item.notes || "No Notes"}
+              {item.notes || 'No Notes'}
             </span>
           </div>
         </div>,
         <div>{convertIDR(item.menus.price * item.quantity)}</div>,
         <div
-          className={cn("px-2 py-1 rounded-full text-white w-fit capitalize", {
-            "bg-gray-500": item.status === "pending",
-            "bg-yellow-500": item.status === "process",
-            "bg-blue-500": item.status === "ready",
-            "bg-green-500": item.status === "serve",
+          className={cn('px-2 py-1 rounded-full text-white w-fit capitalize', {
+            'bg-gray-500': item.status === 'pending',
+            'bg-yellow-500': item.status === 'process',
+            'bg-blue-500': item.status === 'ready',
+            'bg-green-500': item.status === 'serve',
           })}
         >
           {item.status}
         </div>,
-        "",
+        '',
       ];
     });
   }, [orderMenu?.data]);
@@ -100,7 +101,7 @@ export default function DetailOrder({ id }: { id: string }) {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between gap-4 w-full">
         <h1 className="text-2xl font-bold">Detail Order</h1>
-        <Link href="">
+        <Link href={`/order/${id}/add`}>
           <Button>Add Order Item</Button>
         </Link>
       </div>
@@ -116,6 +117,11 @@ export default function DetailOrder({ id }: { id: string }) {
             onChangePage={handleChangePage}
             onChangeLimit={handleChangeLimit}
           />
+        </div>
+        <div className="lg:w-1/3">
+          {order && (
+            <Summary order={order} orderMenu={orderMenu?.data} id={id} />
+          )}
         </div>
       </div>
     </div>
