@@ -1,18 +1,20 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FILTER_MENU } from "@/constants/order-constant";
-import useDataTable from "@/hooks/use-data-table";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import CardMenu from "./card-menu";
-import CartSection from "./cart";
-import { useState } from "react";
-import { Cart } from "@/types/order";
-import { Menu } from "@/validations/menu-validation";
-import createClient from "@/lib/supabase/client";
-import LoadingCardMenu from "./loading-cart-menu";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FILTER_MENU } from '@/constants/order-constant';
+import useDataTable from '@/hooks/use-data-table';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import CardMenu from './card-menu';
+import CartSection from './cart';
+import { startTransition, useActionState, useState } from 'react';
+import { Cart } from '@/types/order';
+import { Menu } from '@/validations/menu-validation';
+import createClient from '@/lib/supabase/client';
+import { addOrderItem } from '../actions';
+import { INITIAL_STATE_ACTION } from '@/constants/general-constants';
+import LoadingCardMenu from './loading-cart-menu';
 
 export default function AddOrderItem({ id }: { id: string }) {
   const supabase = createClient();
@@ -24,23 +26,23 @@ export default function AddOrderItem({ id }: { id: string }) {
   } = useDataTable();
 
   const { data: menus, isLoading: isLoadingMenu } = useQuery({
-    queryKey: ["menus", currentSearch, currentFilter],
+    queryKey: ['menus', currentSearch, currentFilter],
     queryFn: async () => {
       const query = supabase
-        .from("menus")
-        .select("*", { count: "exact" })
-        .order("created_at")
-        .eq("is_available", true)
-        .ilike("name", `%${currentSearch}%`);
+        .from('menus')
+        .select('*', { count: 'exact' })
+        .order('created_at')
+        .eq('is_available', true)
+        .ilike('name', `%${currentSearch}%`);
 
       if (currentFilter) {
-        query.eq("category", currentFilter);
+        query.eq('category', currentFilter);
       }
 
       const result = await query;
 
       if (result.error)
-        toast.error("Get Menu data failed", {
+        toast.error('Get Menu data failed', {
           description: result.error.message,
         });
 
@@ -49,16 +51,16 @@ export default function AddOrderItem({ id }: { id: string }) {
   });
 
   const { data: order } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ['order', id],
     queryFn: async () => {
       const result = await supabase
-        .from("orders")
-        .select("id, customer_name, status, payment_url, tables (name, id)")
-        .eq("order_id", id)
+        .from('orders')
+        .select('id, customer_name, status, payment_url, tables (name, id)')
+        .eq('order_id', id)
         .single();
 
       if (result.error)
-        toast.error("Get Order data failed", {
+        toast.error('Get Order data failed', {
           description: result.error.message,
         });
 
@@ -69,10 +71,10 @@ export default function AddOrderItem({ id }: { id: string }) {
 
   const [carts, setCarts] = useState<Cart[]>([]);
 
-  const handleAddToCart = (menu: Menu, action: "increment" | "decrement") => {
+  const handleAddToCart = (menu: Menu, action: 'increment' | 'decrement') => {
     const existingItem = carts.find((item) => item.menu_id === menu.id);
     if (existingItem) {
-      if (action === "decrement") {
+      if (action === 'decrement') {
         if (existingItem.quantity > 1) {
           setCarts(
             carts.map((item) =>
@@ -82,8 +84,8 @@ export default function AddOrderItem({ id }: { id: string }) {
                     quantity: item.quantity - 1,
                     total: item.total - menu.price,
                   }
-                : item
-            )
+                : item,
+            ),
           );
         } else {
           setCarts(carts.filter((item) => item.menu_id !== menu.id));
@@ -97,16 +99,34 @@ export default function AddOrderItem({ id }: { id: string }) {
                   quantity: item.quantity + 1,
                   total: item.total + menu.price,
                 }
-              : item
-          )
+              : item,
+          ),
         );
       }
     } else {
       setCarts([
         ...carts,
-        { menu_id: menu.id, quantity: 1, total: menu.price, notes: "", menu },
+        { menu_id: menu.id, quantity: 1, total: menu.price, notes: '', menu },
       ]);
     }
+  };
+
+  const [addOrderItemState, addOrderItemAction, isPendingAddOrderItem] =
+    useActionState(addOrderItem, INITIAL_STATE_ACTION);
+
+  const handleOrder = async () => {
+    const data = {
+      order_id: id,
+      items: carts.map((item) => ({
+        order_id: order?.id ?? '',
+        ...item,
+        status: 'pending',
+      })),
+    };
+
+    startTransition(() => {
+      addOrderItemAction(data);
+    });
   };
 
   return (
@@ -120,7 +140,7 @@ export default function AddOrderItem({ id }: { id: string }) {
                 <Button
                   key={item.value}
                   onClick={() => handleChangeFilter(item.value)}
-                  variant={currentFilter === item.value ? "default" : "outline"}
+                  variant={currentFilter === item.value ? 'default' : 'outline'}
                 >
                   {item.label}
                 </Button>
@@ -155,8 +175,11 @@ export default function AddOrderItem({ id }: { id: string }) {
           carts={carts}
           setCarts={setCarts}
           onAddToCart={handleAddToCart}
+          isLoading={isPendingAddOrderItem}
+          onOrder={handleOrder}
         />
       </div>
     </div>
   );
 }
+
