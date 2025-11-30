@@ -4,7 +4,10 @@ export const environment = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 
   MIDTRANS_API_URL: process.env.NEXT_PUBLIC_MIDTRANS_API_URL || "",
-  MIDTRANS_CLIENT_KEY:
-    process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "",
+  MIDTRANS_CLIENT_KEY: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "",
   MIDTRANS_SERVER_KEY: process.env.MIDTRANS_SERVER_KEY || "",
+
+  // 💡 TAMBAHKAN INI
+  NEXT_PUBLIC_SNAP_URL:
+    process.env.NEXT_PUBLIC_SNAP_URL || "https://app.sandbox.midtrans.com",
 };
