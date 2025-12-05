@@ -57,16 +57,10 @@ export default function Summary({
       });
     }
 
-    // 💡 SOLUSI DI SINI: Tambahkan pemeriksaan typeof window dan window.snap
-    if (
-        generatePaymentState?.status === "success" &&
-        typeof window !== 'undefined' && 
-        window.snap
-    ) {
+    if (generatePaymentState?.status === "success") {
       window.snap.pay(generatePaymentState.data.payment_token);
     }
   }, [generatePaymentState]);
-
   return (
     <Card className="w-full shadow-sm">
       <CardContent className="space-y-4">

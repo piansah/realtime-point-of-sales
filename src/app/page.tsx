@@ -32,7 +32,6 @@ export default function HomeScreen() {
           moments that matter.
         </p>
         <div className="flex gap-4">
-          <Button size="lg">Order Now</Button>
           <Link href="/admin">
             <Button size="lg">Access Dashboard</Button>
           </Link>
